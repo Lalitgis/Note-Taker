@@ -1,3 +1,9 @@
+## Daily Sidebar Next 2.0.1
+
+- Windows installer (DailySidebarNext-Setup.exe): Start menu entry, optional desktop icon and start at sign-in, uninstall from Settings > Apps. No admin rights needed. Your data stays in %APPDATA%\DailySidebarNext.
+- Minimizing now keeps the app in the taskbar; the compact sidebar has its own taskbar button.
+- Closing the window quits the app unless "Keep running in the tray" is turned on in Settings.
+
 ## Daily Sidebar Next 2.0.0
 
 A full rebuild of Daily Sidebar with PySide6 (Qt).

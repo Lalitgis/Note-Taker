@@ -31,7 +31,7 @@ DEFAULT_SETTINGS = {
     "long_break": 15,
     "sessions_before_long": 4,
     "focus_sound": True,
-    "close_to_tray": True,
+    "close_to_tray": False,   # off: closing the window quits
     "start_compact": False,
     "compact_on_top": True,
     "compact_opacity": 100,

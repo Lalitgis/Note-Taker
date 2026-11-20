@@ -10,10 +10,13 @@ from .widgets import label, button, TaskList, QuickAdd, ProgressRing
 
 class CompactSidebar(QWidget):
     def __init__(self, ctx):
-        super().__init__(None, Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool)
+        # A normal window (not a tool window) so it keeps a taskbar button and minimizes like any app.
+        super().__init__(None, Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint
+                         | Qt.WindowType.WindowMinimizeButtonHint)
         self.ctx = ctx
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setWindowTitle("Daily Sidebar")
+        self.setWindowIcon(ctx.app_icon)
         self.setMinimumSize(270, 360)
         self._drag = None
 
@@ -37,7 +40,7 @@ class CompactSidebar(QWidget):
         self.pin = button("📌", "iconButton", self.toggle_pin, "Keep on top")
         bar.addWidget(self.pin)
         bar.addWidget(button("⤢", "iconButton", ctx.show_full, "Open the full app"))
-        bar.addWidget(button("—", "iconButton", self.hide, "Hide (reopen from the tray or Ctrl+M)"))
+        bar.addWidget(button("—", "iconButton", self.showMinimized, "Minimize to the taskbar"))
         lay.addLayout(bar)
 
         head = QHBoxLayout()
@@ -196,6 +199,16 @@ class CompactSidebar(QWidget):
         name = {"focus": "Focus", "short": "Break", "long": "Long break"}[f.mode]
         self.focus_label.setText(f"◎  {name}  {f.text()}" + ("" if active else "  ·  ready"))
         self.focus_btn.setText("❚❚" if f.running else "▶")
+
+    def closeEvent(self, e):
+        # Alt+F4 on the compact sidebar behaves like closing the main window.
+        if self.ctx.quitting:
+            return super().closeEvent(e)
+        e.ignore()
+        if self.ctx.store.get("close_to_tray") and self.ctx.tray:
+            self.hide()
+        else:
+            self.ctx.quit_app()
 
     def showEvent(self, e):
         self.refresh()

@@ -11,11 +11,20 @@ It grows the original Daily Sidebar into a full workspace, and keeps the slim al
 <img src="docs/compact.png" width="160" alt="Compact sidebar">
 </p>
 
-## Download
+## Install
 
-Get **DailySidebarNext-windows.zip** from the [latest release](../../releases/latest), unzip it anywhere permanent
-(for example `Documents\DailySidebarNext`) and run `DailySidebarNext.exe`. No installer and no Python needed.
-Turn on *Start when I sign in to Windows* in Settings if you want it at startup.
+Download **DailySidebarNext-Setup.exe** from the [latest release](../../releases/latest) and double-click it.
+It installs for your Windows user (no admin needed), adds Daily Sidebar Next to the Start menu, and can add a
+desktop icon and start it when you sign in. Uninstall it any time from **Settings → Apps → Installed apps**.
+Your tasks and notes are kept in `%APPDATA%\DailySidebarNext`, so updating or uninstalling never deletes them.
+
+Prefer no installer? The release also has **DailySidebarNext-windows.zip**: unzip it anywhere and run `DailySidebarNext.exe`.
+
+### Build the installer yourself
+
+1. Install Inno Setup once: `winget install JRSoftware.InnoSetup` (or from jrsoftware.org).
+2. Double-click **build_installer.bat**. It builds the app and creates `dist\DailySidebarNext-Setup.exe`.
+3. Run the setup. After that you can delete the source folder; the installed app doesn't need it.
 
 > **Windows SmartScreen:** the app isn't code-signed yet, so the first time Windows may say
 > "Windows protected your PC". Click **More info → Run anyway**. You can check the source here
@@ -119,8 +128,8 @@ tests/                     python -m unittest discover -s tests
 ## Releasing a new version
 
 1. Change `__version__` in `dailysidebar/__init__.py` and add notes to `CHANGELOG.md`.
-2. Commit, then tag and push: `git tag v2.0.1 && git push origin v2.0.1`.
-3. GitHub Actions runs the tests, builds the Windows app and attaches `DailySidebarNext-windows.zip` to a new Release.
+2. Commit, then tag and push: `git tag v2.0.2 && git push origin v2.0.2`.
+3. GitHub Actions runs the tests, builds the Windows app and attaches `DailySidebarNext-Setup.exe` and `DailySidebarNext-windows.zip` to a new Release.
 
 ## License
 

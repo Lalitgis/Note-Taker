@@ -134,7 +134,7 @@ class SettingsPage(Page):
         # Behaviour
         be, bl = card(spacing=10)
         bl.addWidget(label("Behaviour", "sectionTitle"))
-        self._check("Closing the window keeps the app running in the tray", "close_to_tray", bl)
+        self._check("Keep running in the tray when I close the window (instead of quitting)", "close_to_tray", bl)
         self.startup = QCheckBox("Start Daily Sidebar when I sign in to Windows")
         self.startup.setEnabled(os.name == "nt")
         self.startup.setChecked(get_startup())

@@ -246,9 +246,9 @@ class MainWindow(QMainWindow):
 
     def _tray_clicked(self, reason):
         if reason in (QSystemTrayIcon.ActivationReason.Trigger, QSystemTrayIcon.ActivationReason.DoubleClick):
-            if self.isVisible() and not self.isMinimized():
-                self.hide()
-            elif self.compact.isVisible():
+            if self.compact.isVisible():
+                if self.compact.isMinimized():
+                    self.compact.showNormal()
                 self.compact.raise_()
                 self.compact.activateWindow()
             else:
@@ -611,6 +611,8 @@ class MainWindow(QMainWindow):
     def show_compact(self):
         self.save_window()
         self.hide()
+        if self.compact.isMinimized():
+            self.compact.showNormal()
         self.compact.show()
         self.compact.raise_()
         self.compact.activateWindow()
