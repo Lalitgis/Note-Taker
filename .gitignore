@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+build/
+dist/
+release/
+*.spec
+DailySidebarNext-windows.zip
+.venv/
+venv/
+.vscode/
+.idea/
+*.db
+*.db-journal
+check-*.svg
