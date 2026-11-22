@@ -1,3 +1,9 @@
+## Daily Sidebar Next 2.0.2
+
+- The installer now installs into C:\Program Files by default, with an "Install for me only" option that needs no admin rights.
+- GitHub releases take their version from the tag (for example v2.0.2), so publishing a release no longer fails on a version mismatch.
+- build_installer.bat installs Inno Setup and the app's requirements by itself if they are missing.
+
 ## Daily Sidebar Next 2.0.1
 
 - Windows installer (DailySidebarNext-Setup.exe): Start menu entry, optional desktop icon and start at sign-in, uninstall from Settings > Apps. No admin rights needed. Your data stays in %APPDATA%\DailySidebarNext.

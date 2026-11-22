@@ -2,16 +2,18 @@
 ; Build the app first (PyInstaller -> dist\DailySidebarNext), then compile this file,
 ; or just run build_installer.bat from the project folder.
 ;
-; Installs for the current user only (no admin prompt) into
-;   %LOCALAPPDATA%\Programs\Daily Sidebar Next
-; and adds a Start menu entry, an optional desktop icon, optional start-at-sign-in
+; By default installs for all users into
+;   C:\Program Files\Daily Sidebar Next   (Windows asks for admin permission once)
+; The first page also offers "Install for me only", which needs no admin rights and
+; installs into %LOCALAPPDATA%\Programs\Daily Sidebar Next instead.
+; Adds a Start menu entry, an optional desktop icon, optional start-at-sign-in
 ; and an entry in Settings > Apps for uninstalling.
 ; Your tasks and notes live in %APPDATA%\DailySidebarNext and are never touched by
 ; installing, updating or uninstalling.
 
 #define MyAppName "Daily Sidebar Next"
 #ifndef MyAppVersion
-  #define MyAppVersion "2.0.1"
+  #define MyAppVersion "2.0.2"
 #endif
 #define MyAppExe "DailySidebarNext.exe"
 
@@ -25,7 +27,7 @@ AppPublisherURL=https://github.com/Lalitgis/Note-Taker
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=..\dist
 OutputBaseFilename=DailySidebarNext-Setup
@@ -40,6 +42,11 @@ ArchitecturesInstallIn64BitMode=x64compatible
 CloseApplications=yes
 RestartApplications=no
 LicenseFile=..\LICENSE
+MinVersion=10.0
+VersionInfoVersion={#MyAppVersion}
+VersionInfoProductName={#MyAppName}
+; The start-at-sign-in value is per user (HKCU) on purpose, like the app's own switch.
+UsedUserAreasWarning=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -61,7 +68,7 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueName: "DailySidebarNext"; Flags: dontcreatekey uninsdeletevalue
 
 [Run]
-Filename: "{app}\{#MyAppExe}"; Description: "Open {#MyAppName} now"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExe}"; Description: "Open {#MyAppName} now"; Flags: nowait postinstall skipifsilent runasoriginaluser
 
 [UninstallRun]
 Filename: "{cmd}"; Parameters: "/C taskkill /IM {#MyAppExe} /F"; Flags: runhidden; RunOnceId: "StopApp"

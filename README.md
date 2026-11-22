@@ -13,22 +13,35 @@ It grows the original Daily Sidebar into a full workspace, and keeps the slim al
 
 ## Install
 
-Download **DailySidebarNext-Setup.exe** from the [latest release](../../releases/latest) and double-click it.
-It installs for your Windows user (no admin needed), adds Daily Sidebar Next to the Start menu, and can add a
-desktop icon and start it when you sign in. Uninstall it any time from **Settings → Apps → Installed apps**.
+1. Open the [latest release](../../releases/latest) and download **DailySidebarNext-Setup.exe**.
+2. Double-click it. If Windows says *"Windows protected your PC"*, click **More info → Run anyway** (the app isn't code-signed yet).
+3. Choose **Install for all users** (installs to `C:\Program Files\Daily Sidebar Next`, Windows asks for permission once)
+   or **Install for me only** (no admin needed, installs to `%LOCALAPPDATA%\Programs`).
+4. Tick *desktop shortcut* and, if you like, *start when I sign in*. Click **Install**.
+
+You don't need Python. Open the app from the Start menu or the desktop icon.
+Uninstall it from **Settings → Apps → Installed apps → Daily Sidebar Next**.
 Your tasks and notes are kept in `%APPDATA%\DailySidebarNext`, so updating or uninstalling never deletes them.
+To update, just run a newer Setup.exe over the old one.
 
-Prefer no installer? The release also has **DailySidebarNext-windows.zip**: unzip it anywhere and run `DailySidebarNext.exe`.
+Prefer no installer? The release also has **DailySidebarNext-windows.zip**: unzip it somewhere permanent and run `DailySidebarNext.exe`.
 
-### Build the installer yourself
+### Publish a new version (GitHub builds the installer for you)
 
-1. Install Inno Setup once: `winget install JRSoftware.InnoSetup` (or from jrsoftware.org).
-2. Double-click **build_installer.bat**. It builds the app and creates `dist\DailySidebarNext-Setup.exe`.
+1. On GitHub go to **Releases → Draft a new release**.
+2. In *Choose a tag*, type a new version such as `v2.0.2` and pick *Create new tag on publish*. Click **Publish release**.
+3. The **Actions** tab runs the build (about 5–8 minutes). It runs the tests, builds the app with PyInstaller,
+   wraps it in the Inno Setup installer and attaches **DailySidebarNext-Setup.exe** and the zip to that release.
+   The tag sets the version number, so you don't need to edit any file.
+
+Every push to `main` also builds the installer; you can download it from that run's *Artifacts* section to test it.
+
+### Build the installer on your own PC
+
+1. Install Python 3.10 or newer from python.org.
+2. Double-click **build_installer.bat**. It installs Inno Setup (with winget) if it's missing, builds the app and
+   creates `dist\DailySidebarNext-Setup.exe`.
 3. Run the setup. After that you can delete the source folder; the installed app doesn't need it.
-
-> **Windows SmartScreen:** the app isn't code-signed yet, so the first time Windows may say
-> "Windows protected your PC". Click **More info → Run anyway**. You can check the source here
-> and the build log in the Actions tab.
 
 ## Run from source
 
