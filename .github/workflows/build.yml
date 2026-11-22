@@ -1,0 +1,83 @@
+name: Build and release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to create the GitHub Release on tags
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pyinstaller
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Use the release tag as the version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          echo "Building version $v from tag ${GITHUB_REF_NAME}"
+          sed -i "s/^__version__ = .*/__version__ = \"$v\"/" dailysidebar/__init__.py
+          cat dailysidebar/__init__.py
+
+      - name: Build DailySidebarNext.exe
+        run: >
+          python -m PyInstaller --noconfirm --windowed --name DailySidebarNext
+          --icon assets/icon.ico --add-data "assets;assets" main.py
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $candidates = @("${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:ProgramFiles\Inno Setup 6\ISCC.exe")
+          $iscc = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) {
+            choco install innosetup --no-progress -y
+            $iscc = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          }
+          if (-not $iscc) { throw "Inno Setup 6 (ISCC.exe) not found" }
+          $v = python -c "import dailysidebar; print(dailysidebar.__version__)"
+          & $iscc "/DMyAppVersion=$v" installer\DailySidebarNext.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-Item dist\DailySidebarNext-Setup.exe
+
+      - name: Package portable zip
+        shell: pwsh
+        run: |
+          Copy-Item README.md, LICENSE, CHANGELOG.md dist/DailySidebarNext/
+          Compress-Archive -Path dist/DailySidebarNext -DestinationPath DailySidebarNext-windows.zip -Force
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DailySidebarNext-windows
+          path: |
+            dist/DailySidebarNext-Setup.exe
+            DailySidebarNext-windows.zip
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG.md
+          fail_on_unmatched_files: true
+          files: |
+            dist/DailySidebarNext-Setup.exe
+            DailySidebarNext-windows.zip
